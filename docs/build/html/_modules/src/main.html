@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.main &#8212; documentación de Xestor Eventos - </title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=6625fa76" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=0828dd0a"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/translations.js?v=efdbd0b9"></script>
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Código fuente para src.main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gi</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gi.repository</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gtk</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">conexionBD</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">db</span>
+<span class="c1"># Importamos as dúas clases de fiestras desde formularios</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">formularios</span><span class="w"> </span><span class="kn">import</span> <span class="n">VentanaEvento</span><span class="p">,</span> <span class="n">VentanaResumo</span>
+
+
+<div class="viewcode-block" id="AppPrincipal"><a class="viewcode-back" href="../../src.html#src.main.AppPrincipal">[documentos]</a><span class="k">class</span><span class="w"> </span><span class="nc">AppPrincipal</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clase principal da aplicación (Fiestra 1).</span>
+<span class="sd">    Xestiona o TreeView e as operacións CRUD principais.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Xestor de Eventos DAM - Edición 2026&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_default_size</span><span class="p">(</span><span class="mi">700</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">WindowPosition</span><span class="o">.</span><span class="n">CENTER</span><span class="p">)</span>
+
+        <span class="c1"># Contedor principal con marxes</span>
+        <span class="n">vbox</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">vbox</span><span class="p">)</span>
+
+        <span class="c1"># --- SECCIÓN SUPERIOR: TÁBOA ---</span>
+        <span class="c1"># Frame para agrupar visualmente a táboa (Requisito de Deseño)</span>
+        <span class="n">frame_taboa</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot; Listado de Eventos &quot;</span><span class="p">)</span>
+        <span class="n">vbox</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">frame_taboa</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># ListStore: ID(int), Nome(str), Tipo(str), Cat(int), Prio(str), Notas(str)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ListStore</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tree</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeView</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="p">)</span>
+
+        <span class="n">columnas</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="s2">&quot;Nome&quot;</span><span class="p">,</span> <span class="s2">&quot;Tipo&quot;</span><span class="p">,</span> <span class="s2">&quot;Catering&quot;</span><span class="p">,</span> <span class="s2">&quot;Prioridade&quot;</span><span class="p">,</span> <span class="s2">&quot;Notas&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">columnas</span><span class="p">):</span>
+            <span class="n">render</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CellRendererText</span><span class="p">()</span>
+            <span class="c1"># Permitir edición directa no nome para punto extra</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">render</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s2">&quot;editable&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                <span class="n">render</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;edited&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_edicion_directa</span><span class="p">)</span>
+
+            <span class="n">col</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeViewColumn</span><span class="p">(</span><span class="n">tit</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">col</span><span class="o">.</span><span class="n">set_resizable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">col</span><span class="o">.</span><span class="n">set_sort_column_id</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>  <span class="c1"># Permite ordenar ao facer clic na cabeceira</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">append_column</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+        <span class="n">scroll</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ScrolledWindow</span><span class="p">()</span>
+        <span class="n">scroll</span><span class="o">.</span><span class="n">set_policy</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">PolicyType</span><span class="o">.</span><span class="n">AUTOMATIC</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">PolicyType</span><span class="o">.</span><span class="n">AUTOMATIC</span><span class="p">)</span>
+        <span class="n">scroll</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
+        <span class="n">frame_taboa</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">scroll</span><span class="p">)</span>
+
+        <span class="c1"># --- SECCIÓN INFERIOR: CONTROL ---</span>
+        <span class="c1"># Separador visual</span>
+        <span class="n">vbox</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Separator</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">HORIZONTAL</span><span class="p">),</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+        <span class="n">hbox</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">spacing</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">vbox</span><span class="o">.</span><span class="n">pack_end</span><span class="p">(</span><span class="n">hbox</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_add</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Engadir Evento&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_add</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;clicked&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_add</span><span class="p">)</span>
+        <span class="n">hbox</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">btn_add</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_resumo</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Ver Estatísticas&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_resumo</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;clicked&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_ver_resumo</span><span class="p">)</span>
+        <span class="n">hbox</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">btn_resumo</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_del</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Eliminar Seleccionado&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_del</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;clicked&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_del</span><span class="p">)</span>
+        <span class="n">hbox</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">btn_del</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Inicialización</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">inicializar_bd</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refrescar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_all</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AppPrincipal.refrescar"><a class="viewcode-back" href="../../src.html#src.main.AppPrincipal.refrescar">[documentos]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">refrescar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Actualiza os datos da táboa dende a BD.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">CRUD</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AppPrincipal.on_add"><a class="viewcode-back" href="../../src.html#src.main.AppPrincipal.on_add">[documentos]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Abre a Fiestra 2 (Formulario de entrada).&quot;&quot;&quot;</span>
+        <span class="n">win</span> <span class="o">=</span> <span class="n">VentanaEvento</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">win</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="o">==</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">OK</span><span class="p">:</span>
+            <span class="n">datos</span> <span class="o">=</span> <span class="n">win</span><span class="o">.</span><span class="n">recuperar_datos</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">datos</span><span class="p">:</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">CRUD</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">datos</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">refrescar</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">alerta</span><span class="p">(</span><span class="s2">&quot;Erro: O campo &#39;Nome&#39; non pode quedar baleiro.&quot;</span><span class="p">)</span>
+        <span class="n">win</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AppPrincipal.on_ver_resumo"><a class="viewcode-back" href="../../src.html#src.main.AppPrincipal.on_ver_resumo">[documentos]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_ver_resumo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Abre a Fiestra 3 (Resumo de estatísticas).&quot;&quot;&quot;</span>
+        <span class="n">total</span><span class="p">,</span> <span class="n">catering</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">obter_resumo</span><span class="p">()</span>
+        <span class="n">win_resumo</span> <span class="o">=</span> <span class="n">VentanaResumo</span><span class="p">(</span><span class="n">total</span><span class="p">,</span> <span class="n">catering</span><span class="p">)</span>
+        <span class="n">win_resumo</span><span class="o">.</span><span class="n">set_transient_for</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># Para que quede vinculada á principal</span>
+        <span class="n">win_resumo</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AppPrincipal.on_del"><a class="viewcode-back" href="../../src.html#src.main.AppPrincipal.on_del">[documentos]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_del</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Operación crítica con diálogo de confirmación.&quot;&quot;&quot;</span>
+        <span class="n">model</span><span class="p">,</span> <span class="nb">iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">get_selection</span><span class="p">()</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">iter</span><span class="p">:</span>
+            <span class="n">confirm</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">MessageDialog</span><span class="p">(</span>
+                <span class="n">transient_for</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">message_type</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">MessageType</span><span class="o">.</span><span class="n">QUESTION</span><span class="p">,</span>
+                <span class="n">buttons</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">ButtonsType</span><span class="o">.</span><span class="n">YES_NO</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;¿Estás seguro de que queres eliminar este rexistro?&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">confirm</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="o">==</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">YES</span><span class="p">:</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">CRUD</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="nb">iter</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">refrescar</span><span class="p">()</span>
+            <span class="n">confirm</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alerta</span><span class="p">(</span><span class="s2">&quot;Por favor, selecciona primeiro unha fila da táboa.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppPrincipal.on_edicion_directa"><a class="viewcode-back" href="../../src.html#src.main.AppPrincipal.on_edicion_directa">[documentos]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_edicion_directa</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">novo_texto</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Actualiza o nome mediante edición directa no TreeView.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">novo_texto</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="n">id_ev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="p">[</span><span class="n">path</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">fila</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="p">[</span><span class="n">path</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">fila</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">novo_texto</span>
+            <span class="n">fila</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">id_ev</span><span class="p">)</span>  <span class="c1"># ID para o WHERE do UPDATE</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">CRUD</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">fila</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">refrescar</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AppPrincipal.alerta"><a class="viewcode-back" href="../../src.html#src.main.AppPrincipal.alerta">[documentos]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">alerta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texto</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Diálogo de aviso para o usuario.&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">MessageDialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">MessageType</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ButtonsType</span><span class="o">.</span><span class="n">OK</span><span class="p">,</span> <span class="n">texto</span><span class="p">)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">win</span> <span class="o">=</span> <span class="n">AppPrincipal</span><span class="p">()</span>
+    <span class="n">win</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;destroy&quot;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">main_quit</span><span class="p">)</span>
+    <span class="n">Gtk</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Xestor Eventos</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navegación</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Código de módulo</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2026, AdrianMc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
