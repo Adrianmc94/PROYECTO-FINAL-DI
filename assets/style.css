@@ -1,0 +1,53 @@
+/* Configuración de la ventana principal */
+window {
+    background-color: #f5f6fa; /* Gris muy claro, profesional */
+    color: #2f3640;
+}
+
+/* Los Marcos (Gtk.Frame) que usamos para agrupar */
+frame {
+    border: 1px solid #dcdde1;
+    border-radius: 15px;
+    background-color: #ffffff;
+    margin: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo general de los botones */
+button {
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-weight: bold;
+    background-image: linear-gradient(to bottom, #ffffff, #f1f2f6);
+    border: 1px solid #ced6e0;
+    transition: all 0.2s ease;
+}
+
+/* Efecto al pasar el ratón por encima (Hover) */
+button:hover {
+    background-image: linear-gradient(to bottom, #f1f2f6, #dfe4ea);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Colores personalizados para acciones específicas */
+.btn-add {
+    background-image: linear-gradient(to bottom, #2ecc71, #27ae60);
+    color: white;
+}
+
+.btn-del {
+    background-image: linear-gradient(to bottom, #e74c3c, #c0392b);
+    color: white;
+}
+
+/* La Tabla (TreeView) */
+treeview {
+    background-color: white;
+    border-radius: 8px;
+}
+
+treeview:selected {
+    background-color: #3498db;
+    color: white;
+}

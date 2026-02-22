@@ -1,135 +1,145 @@
 import gi
+import os
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
+
 import conexionBD as db
-# Importamos as dúas clases de fiestras desde formularios
-from formularios import VentanaEvento, VentanaResumo
+from GUI.ventana_formulario import VentanaFormulario
+from GUI.ventana_resumo import VentanaResumo
 
 
 class AppPrincipal(Gtk.Window):
-    """
-    Clase principal da aplicación (Fiestra 1).
-    Xestiona o TreeView e as operacións CRUD principais.
-    """
-
     def __init__(self):
-        super().__init__(title="Xestor de Eventos DAM - Edición 2026")
-        self.set_default_size(700, 500)
+        super().__init__(title="Xestor de Eventos DAM")
+        self.set_default_size(800, 500)
         self.set_position(Gtk.WindowPosition.CENTER)
 
-        # Contedor principal con marxes
+        # Cargar estilos antes de mostrar los widgets
+        self.aplicar_estilos()
+
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10, margin=15)
         self.add(vbox)
 
-        # --- SECCIÓN SUPERIOR: TÁBOA ---
-        # Frame para agrupar visualmente a táboa (Requisito de Deseño)
-        frame_taboa = Gtk.Frame(label=" Listado de Eventos ")
+        # TABLA
+        frame_taboa = Gtk.Frame(label=" Eventos Rexistrados ")
         vbox.pack_start(frame_taboa, True, True, 0)
 
-        # ListStore: ID(int), Nome(str), Tipo(str), Cat(int), Prio(str), Notas(str)
         self.store = Gtk.ListStore(int, str, str, int, str, str)
         self.tree = Gtk.TreeView(model=self.store)
 
-        columnas = ["ID", "Nome", "Tipo", "Catering", "Prioridade", "Notas"]
-        for i, tit in enumerate(columnas):
-            render = Gtk.CellRendererText()
-            # Permitir edición directa no nome para punto extra
-            if i == 1:
-                render.set_property("editable", True)
-                render.connect("edited", self.on_edicion_directa)
-
-            col = Gtk.TreeViewColumn(tit, render, text=i)
-            col.set_resizable(True)
-            col.set_sort_column_id(i)  # Permite ordenar ao facer clic na cabeceira
+        for i, tit in enumerate(["ID", "Nombre", "Tipo", "Cat.", "Prio.", "Notas"]):
+            col = Gtk.TreeViewColumn(tit, Gtk.CellRendererText(), text=i)
             self.tree.append_column(col)
 
         scroll = Gtk.ScrolledWindow()
-        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.add(self.tree)
         frame_taboa.add(scroll)
 
-        # --- SECCIÓN INFERIOR: CONTROL ---
-        # Separador visual
-        vbox.pack_start(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, False, 5)
-
+        # BOTONES
         hbox = Gtk.Box(spacing=10)
         vbox.pack_end(hbox, False, False, 0)
 
-        self.btn_add = Gtk.Button(label="Engadir Evento")
+        # Botón Engadir
+        self.btn_add = Gtk.Button(label="Añadir")
+        self.btn_add.get_style_context().add_class("btn-add")
         self.btn_add.connect("clicked", self.on_add)
         hbox.pack_start(self.btn_add, True, True, 0)
 
-        self.btn_resumo = Gtk.Button(label="Ver Estatísticas")
+        # Botón Editar
+        self.btn_edit = Gtk.Button(label="Editar")
+        hbox.pack_start(self.btn_edit, True, True, 0)
+        self.btn_edit.connect("clicked", self.on_edit)
+
+        # Botón Estatísticas
+        self.btn_resumo = Gtk.Button(label="Estatísticas")
+        self.btn_resumo.get_style_context().add_class("btn-stats")  # Clase según tu style.css
         self.btn_resumo.connect("clicked", self.on_ver_resumo)
         hbox.pack_start(self.btn_resumo, True, True, 0)
 
-        self.btn_del = Gtk.Button(label="Eliminar Seleccionado")
+        # Botón Eliminar
+        self.btn_del = Gtk.Button(label="Eliminar")
+        self.btn_del.get_style_context().add_class("btn-del")
         self.btn_del.connect("clicked", self.on_del)
         hbox.pack_start(self.btn_del, True, True, 0)
 
-        # Inicialización
         db.inicializar_bd()
         self.refrescar()
         self.show_all()
 
+    def aplicar_estilos(self):
+        """Busca el CSS en la carpeta /assets/ situada en la raíz del proyecto."""
+        css_provider = Gtk.CssProvider()
+
+        ruta_base = os.path.dirname(os.path.abspath(__file__))
+        ruta_css = os.path.join(os.path.dirname(ruta_base), "assets", "style.css")
+
+        try:
+            if os.path.exists(ruta_css):
+                css_provider.load_from_path(ruta_css)
+                Gtk.StyleContext.add_provider_for_screen(
+                    Gdk.Screen.get_default(),
+                    css_provider,
+                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+                )
+                print(f"Estilos cargados desde: {ruta_css}")
+            else:
+                print(f"Advertencia: No se encontró el CSS en {ruta_css}")
+        except Exception as e:
+            print(f"Erro ao cargar CSS: {e}")
+
     def refrescar(self):
-        """Actualiza os datos da táboa dende a BD."""
         self.store.clear()
         for r in db.CRUD("R"):
             self.store.append(list(r))
 
     def on_add(self, _):
-        """Abre a Fiestra 2 (Formulario de entrada)."""
-        win = VentanaEvento(self)
+        win = VentanaFormulario(self)
         if win.run() == Gtk.ResponseType.OK:
             datos = win.recuperar_datos()
             if datos:
                 db.CRUD("C", datos)
                 self.refrescar()
-            else:
-                self.alerta("Erro: O campo 'Nome' non pode quedar baleiro.")
         win.destroy()
 
+    def on_edit(self, _):
+        model, iter = self.tree.get_selection().get_selected()
+        if iter:
+            fila = list(model[iter])
+            win = VentanaFormulario(self, fila=fila)
+            if win.run() == Gtk.ResponseType.OK:
+                datos = win.recuperar_datos()
+                if datos:
+                    # El orden de los datos debe coincidir con el UPDATE en conexionBD.py
+                    db.CRUD("U", datos)
+                    self.refrescar()
+            win.destroy()
+        else:
+            self.alerta("Selecciona un evento para editar.")
+
     def on_ver_resumo(self, _):
-        """Abre a Fiestra 3 (Resumo de estatísticas)."""
-        total, catering = db.obter_resumo()
-        win_resumo = VentanaResumo(total, catering)
-        win_resumo.set_transient_for(self)  # Para que quede vinculada á principal
+        # Asegúrate de que db.obter_resumo() devuelva los 5 valores necesarios
+        total, catering, por_tipo, nomes_catering, nomes_alta = db.obter_resumo()
+        win_resumo = VentanaResumo(total, catering, por_tipo, nomes_catering, nomes_alta)
+        win_resumo.set_transient_for(self)
         win_resumo.show()
 
     def on_del(self, _):
-        """Operación crítica con diálogo de confirmación."""
         model, iter = self.tree.get_selection().get_selected()
         if iter:
-            confirm = Gtk.MessageDialog(
-                transient_for=self,
-                message_type=Gtk.MessageType.QUESTION,
-                buttons=Gtk.ButtonsType.YES_NO,
-                text="¿Estás seguro de que queres eliminar este rexistro?"
-            )
+            confirm = Gtk.MessageDialog(self, 0, Gtk.MessageType.QUESTION,
+                                        Gtk.ButtonsType.YES_NO, "¿Estás seguro?")
             if confirm.run() == Gtk.ResponseType.YES:
                 db.CRUD("D", model[iter][0])
                 self.refrescar()
             confirm.destroy()
         else:
-            self.alerta("Por favor, selecciona primeiro unha fila da táboa.")
+            self.alerta("Selecciona primero una fila.")
 
-    def on_edicion_directa(self, _, path, novo_texto):
-        """Actualiza o nome mediante edición directa no TreeView."""
-        if novo_texto.strip():
-            id_ev = self.store[path][0]
-            fila = list(self.store[path][1:])
-            fila[0] = novo_texto
-            fila.append(id_ev)  # ID para o WHERE do UPDATE
-            db.CRUD("U", tuple(fila))
-            self.refrescar()
-
-    def alerta(self, texto):
-        """Diálogo de aviso para o usuario."""
-        msg = Gtk.MessageDialog(self, 0, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, texto)
-        msg.run()
-        msg.destroy()
+    def alerta(self, msg):
+        d = Gtk.MessageDialog(self, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, msg)
+        d.run()
+        d.destroy()
 
 
 if __name__ == "__main__":

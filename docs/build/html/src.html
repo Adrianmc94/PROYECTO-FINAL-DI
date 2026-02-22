@@ -14,6 +14,8 @@
     <script src="_static/translations.js?v=efdbd0b9"></script>
     <link rel="index" title="Índice" href="genindex.html" />
     <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="src.GUI package" href="src.GUI.html" />
+    <link rel="prev" title="src" href="modules.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -32,6 +34,29 @@
             
   <section id="src-package">
 <h1>src package<a class="headerlink" href="#src-package" title="Enlace permanente a este encabezado">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Enlace permanente a este encabezado">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src.GUI.html">src.GUI package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.GUI.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.GUI.html#module-src.GUI.ventana_formulario">src.GUI.ventana_formulario module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.GUI.html#src.GUI.ventana_formulario.VentanaFormulario"><code class="docutils literal notranslate"><span class="pre">VentanaFormulario</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.GUI.html#src.GUI.ventana_formulario.VentanaFormulario.recuperar_datos"><code class="docutils literal notranslate"><span class="pre">VentanaFormulario.recuperar_datos()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.GUI.html#module-src.GUI.ventana_resumo">src.GUI.ventana_resumo module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.GUI.html#src.GUI.ventana_resumo.VentanaResumo"><code class="docutils literal notranslate"><span class="pre">VentanaResumo</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.GUI.html#module-src.GUI">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Enlace permanente a este encabezado">¶</a></h2>
 </section>
@@ -40,48 +65,42 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="src.conexionBD.CRUD">
 <span class="sig-prename descclassname"><span class="pre">src.conexionBD.</span></span><span class="sig-name descname"><span class="pre">CRUD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operacion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/conexionBD.html#CRUD"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.conexionBD.CRUD" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Gestiona las operaciones Create, Read, Update y Delete.</p>
+<dd><p>Fachada para las operaciones de persistencia.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>operacion</strong> – Carácter “C”, “R”, “U” o “D” según la acción requerida.</p></li>
+<li><p><strong>datos</strong> – Tupla de datos para operaciones de escritura/actualización.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de registros en caso de operación “R”.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.conexionBD.conectar">
 <span class="sig-prename descclassname"><span class="pre">src.conexionBD.</span></span><span class="sig-name descname"><span class="pre">conectar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/conexionBD.html#conectar"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.conexionBD.conectar" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Establece conexión con la base de datos SQLite.</p>
+<dd><p>Establece conexión con el motor SQLite.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.conexionBD.inicializar_bd">
 <span class="sig-prename descclassname"><span class="pre">src.conexionBD.</span></span><span class="sig-name descname"><span class="pre">inicializar_bd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/conexionBD.html#inicializar_bd"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.conexionBD.inicializar_bd" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Crea la tabla con todos los campos necesarios al iniciar.</p>
+<dd><p>Crea la estructura de tablas necesaria para el despliegue inicial.
+Verifica la existencia de la tabla “eventos” y sus campos.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.conexionBD.obter_resumo">
 <span class="sig-prename descclassname"><span class="pre">src.conexionBD.</span></span><span class="sig-name descname"><span class="pre">obter_resumo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/conexionBD.html#obter_resumo"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.conexionBD.obter_resumo" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Calcula estadísticas para la tercera ventana de la aplicación.</p>
-</dd></dl>
-
-</section>
-<section id="module-src.formularios">
-<span id="src-formularios-module"></span><h2>src.formularios module<a class="headerlink" href="#module-src.formularios" title="Enlace permanente a este encabezado">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="src.formularios.VentanaEvento">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.formularios.</span></span><span class="sig-name descname"><span class="pre">VentanaEvento</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/formularios.html#VentanaEvento"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.formularios.VentanaEvento" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dialog</span></code></p>
-<p>VENTANA 2: Diálogo para añadir o editar eventos.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="src.formularios.VentanaEvento.recuperar_datos">
-<span class="sig-name descname"><span class="pre">recuperar_datos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/formularios.html#VentanaEvento.recuperar_datos"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.formularios.VentanaEvento.recuperar_datos" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Valida y devuelve los datos introducidos.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="src.formularios.VentanaResumo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.formularios.</span></span><span class="sig-name descname"><span class="pre">VentanaResumo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/formularios.html#VentanaResumo"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.formularios.VentanaResumo" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></p>
-<p>VENTANA 3: Ventana independiente de estadísticas.</p>
+<dd><p>Realiza consultas de agregación para el análisis de datos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tupla con (total, catering_count, por_tipo_list, nombres_catering, nombres_alta)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -89,55 +108,44 @@
 <span id="src-main-module"></span><h2>src.main module<a class="headerlink" href="#module-src.main" title="Enlace permanente a este encabezado">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.main.AppPrincipal">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.main.</span></span><span class="sig-name descname"><span class="pre">AppPrincipal</span></span><a class="reference internal" href="_modules/src/main.html#AppPrincipal"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.main.AppPrincipal" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.main.</span></span><span class="sig-name descname"><span class="pre">AppPrincipal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main.html#AppPrincipal"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.main.AppPrincipal" title="Enlazar permanentemente con esta definición">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></p>
-<p>Clase principal da aplicación (Fiestra 1).
-Xestiona o TreeView e as operacións CRUD principais.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.main.AppPrincipal.alerta">
-<span class="sig-name descname"><span class="pre">alerta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main.html#AppPrincipal.alerta"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.main.AppPrincipal.alerta" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Diálogo de aviso para o usuario.</p>
+<span class="sig-name descname"><span class="pre">alerta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main.html#AppPrincipal.alerta"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.main.AppPrincipal.alerta" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.main.AppPrincipal.aplicar_estilos">
+<span class="sig-name descname"><span class="pre">aplicar_estilos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main.html#AppPrincipal.aplicar_estilos"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.main.AppPrincipal.aplicar_estilos" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Busca el CSS en la carpeta /assets/ situada en la raíz del proyecto.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.main.AppPrincipal.on_add">
 <span class="sig-name descname"><span class="pre">on_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main.html#AppPrincipal.on_add"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.main.AppPrincipal.on_add" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Abre a Fiestra 2 (Formulario de entrada).</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.main.AppPrincipal.on_del">
 <span class="sig-name descname"><span class="pre">on_del</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main.html#AppPrincipal.on_del"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.main.AppPrincipal.on_del" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Operación crítica con diálogo de confirmación.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="src.main.AppPrincipal.on_edicion_directa">
-<span class="sig-name descname"><span class="pre">on_edicion_directa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">novo_texto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main.html#AppPrincipal.on_edicion_directa"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.main.AppPrincipal.on_edicion_directa" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Actualiza o nome mediante edición directa no TreeView.</p>
-</dd></dl>
+<dt class="sig sig-object py" id="src.main.AppPrincipal.on_edit">
+<span class="sig-name descname"><span class="pre">on_edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main.html#AppPrincipal.on_edit"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.main.AppPrincipal.on_edit" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.main.AppPrincipal.on_ver_resumo">
 <span class="sig-name descname"><span class="pre">on_ver_resumo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main.html#AppPrincipal.on_ver_resumo"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.main.AppPrincipal.on_ver_resumo" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Abre a Fiestra 3 (Resumo de estatísticas).</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.main.AppPrincipal.refrescar">
 <span class="sig-name descname"><span class="pre">refrescar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main.html#AppPrincipal.refrescar"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.main.AppPrincipal.refrescar" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Actualiza os datos da táboa dende a BD.</p>
-</dd></dl>
+<dd></dd></dl>
 
-</dd></dl>
-
-</section>
-<section id="module-src.test_db">
-<span id="src-test-db-module"></span><h2>src.test_db module<a class="headerlink" href="#module-src.test_db" title="Enlace permanente a este encabezado">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="src.test_db.test_ciclo_vida_datos">
-<span class="sig-prename descclassname"><span class="pre">src.test_db.</span></span><span class="sig-name descname"><span class="pre">test_ciclo_vida_datos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/test_db.html#test_ciclo_vida_datos"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.test_db.test_ciclo_vida_datos" title="Enlazar permanentemente con esta definición">¶</a></dt>
-<dd><p>Proba as operacións CRUD básicas directamente na BD.</p>
 </dd></dl>
 
 </section>
@@ -163,11 +171,22 @@ Xestiona o TreeView e as operacións CRUD principais.</p>
 
 
 <h3>Navegación</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">src package</a></li>
+</ul>
+</li>
+</ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+      <li>Previous: <a href="modules.html" title="capítulo anterior">src</a></li>
+      <li>Next: <a href="src.GUI.html" title="próximo capítulo">src.GUI package</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>

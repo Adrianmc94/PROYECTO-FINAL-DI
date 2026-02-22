@@ -1,9 +1,9 @@
 import os
 import sys
 
-# Engadimos tanto a raíz do proxecto como a carpeta src ao camiño de busca
-# Isto soluciona o erro "No module named 'src'"
+# Subimos dos niveles para llegar a la raíz del proyecto
 sys.path.insert(0, os.path.abspath('../../'))
+# Opcionalmente, para que encuentre los módulos dentro de src directamente
 sys.path.insert(0, os.path.abspath('../../src'))
 
 # -- Project information -----------------------------------------------------

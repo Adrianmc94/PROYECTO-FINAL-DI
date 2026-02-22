@@ -1,17 +1,21 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="XestorEventos",
+    name="XestorEventosDAM",
     version="1.0",
-    description="Aplicación de xestión de eventos con GTK3 e SQLite",
-    author="Adrián",
-    packages=find_packages(),
+    description="Aplicación de gestión de eventos con GTK3 y SQLite",
+    author="Tu Nombre",
+    # Buscamos paquetes DENTRO de la carpeta 'src'
+    packages=find_packages(where='src'),
+    # Le decimos que la raíz de esos paquetes es la carpeta 'src'
+    package_dir={'': 'src'},
+    include_package_data=True,
     install_requires=[
         'PyGObject',
     ],
     entry_points={
         'console_scripts': [
-            'xestor-eventos=src.main:main',
+            'gestor-eventos=main:main',
         ],
     },
 )
