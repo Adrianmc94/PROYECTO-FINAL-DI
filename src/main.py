@@ -11,7 +11,7 @@ from GUI.ventana_resumo import VentanaResumo
 
 class AppPrincipal(Gtk.Window):
     def __init__(self):
-        super().__init__(title="Xestor de Eventos DAM")
+        super().__init__(title="Gestor de Eventos DAM")
         self.set_default_size(800, 500)
         self.set_position(Gtk.WindowPosition.CENTER)
 
@@ -22,7 +22,7 @@ class AppPrincipal(Gtk.Window):
         self.add(vbox)
 
         # TABLA
-        frame_taboa = Gtk.Frame(label=" Eventos Rexistrados ")
+        frame_taboa = Gtk.Frame(label=" Eventos Registrados")
         vbox.pack_start(frame_taboa, True, True, 0)
 
         self.store = Gtk.ListStore(int, str, str, int, str, str)

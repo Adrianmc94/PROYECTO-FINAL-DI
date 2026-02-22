@@ -15,26 +15,16 @@ def inicializar_bd():
     Verifica la existencia de la tabla 'eventos' y sus campos.
     """
     with conectar() as con:
-        con.execute("""CREATE TABLE IF NOT EXISTS eventos
-                       (
-                           id
-                           INTEGER
-                           PRIMARY
-                           KEY
-                           AUTOINCREMENT,
-                           nome
-                           TEXT
-                           NOT
-                           NULL,
-                           tipo
-                           TEXT,
-                           catering
-                           INTEGER,
-                           prioridade
-                           TEXT,
-                           notas
-                           TEXT
-                       )""")
+        con.execute("""
+            CREATE TABLE IF NOT EXISTS eventos (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome       TEXT NOT NULL,
+                tipo       TEXT,
+                catering   INTEGER,
+                prioridade TEXT,
+                notas      TEXT
+            )
+        """)
 
 
 def CRUD(operacion, datos=None):
